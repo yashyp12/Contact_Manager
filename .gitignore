@@ -1,0 +1,28 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+target/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Compiled files
+*.class
+*.jar
+*.war
+
+# Database credentials (IMPORTANT - protects your password!)
+**/database.properties
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+```
