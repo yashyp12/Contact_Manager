@@ -51,12 +51,9 @@ public class Contact {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
     // Getters and Setters
     // Getters: To READ data from private fields
     // Setters: To WRITE data to private fields
-
-
     public int getId() {
         return id;
     }
@@ -135,8 +132,8 @@ public class Contact {
                 ",updatedAt =" + updatedAt +
                 '}';
     }
-// Method to display contact in user-friendly format
 
+// Method to display contact in user-friendly format
     public String toDisplayString(){
         return String.format(
           "ID : %d | Name: %s %s | phone: %s | Email: %s  | Address: %s",
