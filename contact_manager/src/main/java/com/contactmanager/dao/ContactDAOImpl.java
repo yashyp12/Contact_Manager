@@ -84,19 +84,79 @@ public class ContactDAOImpl implements ContactDAO {
                 return extractContactFromResultSet(rs);
             }
             return null;
+        } catch (SQLException e) {
+            System.out.println("Error fetching contact by Id : " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
+
+    /**
+     * Retrieves all contacts
+     * Demonstrates looping through ResultSet
+     */
     @Override
     public List<Contact> getAllContacts() {
-        return List.of();
+
+        List<Contact> contacts = new ArrayList<>();
+        String sql = "SELECT * FROM contacts ORDER BY id ASC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            // Loop through all rows
+            // next() returns false when no more rows
+
+            while (rs.next()) {
+                Contact contact = extractContactFromResultSet(res);
+                contacts.add(contact);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching all contacts: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return contacts;
     }
+
+
+
+      /**
+     * Searches contacts by name
+     * Demonstrates LIKE query for partial matching
+     */
 
     @Override
     public List<Contact> searchContactByName(String name) {
-        return List.of();
+
+        List<Contact> contacts = new ArrayList<>();
+
+        // ILIKE is case-insensitive LIKE in PostgreSQL
+        // % is wildcard (matches any characters)
+
+        String sql = "SELECT * FROM contacts WHERE first_name ILIKE ? OR last_name ILIKE ?";
+        try(Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+
+            // Add wildcards for partial matching
+            // "Am" becomes "%Am%"
+String searchPattern = "%" + name + "%";
+pstmt.setString(1,searchPattern);
+pstmt.setString(2,searchPattern);
+
+ResultSet rs = pstmt.executeQuery();
+
+while (rs.next()){
+    contacts.add(extractContactFromResultSet(rs));
+}
+        }catch (SQLException e){
+            System.out.println("Errpr searching contacts " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return contacts;
     }
 
     @Override
