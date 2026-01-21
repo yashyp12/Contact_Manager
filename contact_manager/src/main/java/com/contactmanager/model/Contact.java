@@ -51,6 +51,11 @@ public class Contact {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public Contact() {
+        // for handling sample cases
+    }
+
     // Getters and Setters
     // Getters: To READ data from private fields
     // Setters: To WRITE data to private fields

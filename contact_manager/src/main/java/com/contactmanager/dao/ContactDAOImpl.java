@@ -159,6 +159,11 @@ while (rs.next()){
         return contacts;
     }
 
+    private Contact extractContactFromResultSet(ResultSet rs) {
+
+        return new Contact();
+    }
+
     @Override
     public boolean updateCotact(Contact contact) {
         return false;
