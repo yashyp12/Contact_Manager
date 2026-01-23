@@ -2,6 +2,8 @@ package com.contactmanager;
 import com.contactmanager.dao.ContactDAO;
 import com.contactmanager.dao.ContactDAOImpl;
 import com.contactmanager.model.Contact;
+
+import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -35,8 +37,9 @@ public class DAOTest {
 
              // TEST 2: Add new contact
         System.out.println("TEST 2: Adding new contact...");
+        Contact newContact = new Contact("Yash","Patil","999999999","email@gmail.com","pune",new Timestamp(System.currentTimeMillis()),new Timestamp(System.currentTimeMillis()));
 
-        
+        Boolean added = dao.addContact(newContact);
 
 
     }
