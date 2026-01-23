@@ -52,6 +52,14 @@ public class Contact {
         this.updatedAt = updatedAt;
     }
 
+    public Contact(String firstName, String lastName, String phone, String email, String address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+    }
+
     public Contact() {
         // for handling sample cases
     }
@@ -143,7 +151,8 @@ public class Contact {
         return String.format(
           "ID : %d | Name: %s %s | phone: %s | Email: %s  | Address: %s",
           id,firstName,(lastName!=null ? lastName  :""),
-          phone,(email !=null ? address : "Na")
+          phone,(email !=null ? email : "N/A"),
+                (address !=null ? address : "N/A")
         );
     }
 

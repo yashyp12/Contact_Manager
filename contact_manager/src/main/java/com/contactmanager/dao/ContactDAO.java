@@ -72,7 +72,7 @@ public interface ContactDAO {
      */
 
 
-  boolean updateCotact(Contact contact);
+  boolean updateContact(Contact contact);
 
    /**
      * Deletes a contact by ID

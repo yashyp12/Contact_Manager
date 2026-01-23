@@ -158,7 +158,7 @@ public class ContactDAOImpl implements ContactDAO {
 
 
     @Override
-    public boolean updateCotact(Contact contact) {
+    public boolean updateContact(Contact contact) {
 
         String sql = "UPDATE contacts SET first_name = ?, last_name = ?, phone = ?,address = ?,updated_at = CURRENT_TIMESTAMP WHERE ID = ?";
 
