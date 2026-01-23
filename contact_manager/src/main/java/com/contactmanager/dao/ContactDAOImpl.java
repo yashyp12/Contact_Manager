@@ -110,7 +110,7 @@ public class ContactDAOImpl implements ContactDAO {
             // next() returns false when no more rows
 
             while (rs.next()) {
-                Contact contact = extractContactFromResultSet(res);
+                Contact contact = extractContactFromResultSet(rs);
                 contacts.add(contact);
             }
         } catch (SQLException e) {
@@ -121,8 +121,7 @@ public class ContactDAOImpl implements ContactDAO {
     }
 
 
-
-      /**
+    /**
      * Searches contacts by name
      * Demonstrates LIKE query for partial matching
      */
@@ -136,22 +135,22 @@ public class ContactDAOImpl implements ContactDAO {
         // % is wildcard (matches any characters)
 
         String sql = "SELECT * FROM contacts WHERE first_name ILIKE ? OR last_name ILIKE ?";
-        try(Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 
             // Add wildcards for partial matching
             // "Am" becomes "%Am%"
-String searchPattern = "%" + name + "%";
-pstmt.setString(1,searchPattern);
-pstmt.setString(2,searchPattern);
+            String searchPattern = "%" + name + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
 
-ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
 
-while (rs.next()){
-    contacts.add(extractContactFromResultSet(rs));
-}
-        }catch (SQLException e){
+            while (rs.next()) {
+                contacts.add(extractContactFromResultSet(rs));
+            }
+        } catch (SQLException e) {
             System.out.println("Errpr searching contacts " + e.getMessage());
             e.printStackTrace();
         }
