@@ -98,7 +98,6 @@ public class ContactDAOImpl implements ContactDAO {
      */
     @Override
     public List<Contact> getAllContacts() {
-
         List<Contact> contacts = new ArrayList<>();
         String sql = "SELECT * FROM contacts ORDER BY id ASC";
 
@@ -108,7 +107,6 @@ public class ContactDAOImpl implements ContactDAO {
 
             // Loop through all rows
             // next() returns false when no more rows
-
             while (rs.next()) {
                 Contact contact = extractContactFromResultSet(rs);
                 contacts.add(contact);
@@ -158,23 +156,75 @@ public class ContactDAOImpl implements ContactDAO {
         return contacts;
     }
 
-    private Contact extractContactFromResultSet(ResultSet rs) {
-
-        return new Contact();
-    }
 
     @Override
     public boolean updateCotact(Contact contact) {
-        return false;
+
+        String sql = "UPDATE contacts SET first_name = ?, last_name = ?, phone = ?,address = ?,updated_at = CURRENT_TIMESTAMP WHERE ID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, contact.getFirstName());
+            pstmt.setString(2, contact.getLastName());
+            pstmt.setString(3, contact.getPhone());
+            pstmt.setString(4, contact.getEmail());
+            pstmt.setString(5, contact.getAddress());
+            pstmt.setInt(6, contact.getId());
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException E) {
+            System.err.println("Error updating the contact :" + E.getMessage());
+            E.printStackTrace();
+            return false;
+        }
     }
 
+
+    /**
+     * Deletes contact by ID
+     * Demonstrates DELETE query
+     */
     @Override
     public boolean deleteContact(int id) {
-        return false;
+        String sql = "DELETE FROM contacts WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException E) {
+            System.err.println("Error deleting the contact :" + E.getMessage());
+            E.printStackTrace();
+            return false;
+        }
     }
+
+    /**
+     * Counts total contacts
+     * Demonstrates aggregate function (COUNT)
+     */
 
     @Override
     public int getContactCount() {
+        String sql = "SELECT COUNT(*) FROM contacts";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                // COUNT(*) returns integer in first column
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting the contact :" + e.getMessage());
+            e.printStackTrace();
+        }
         return 0;
     }
 
@@ -184,5 +234,35 @@ public class ContactDAOImpl implements ContactDAO {
      * Demonstrates ResultSet handling
      */
 
+
+    /**
+     * Helper method to extract Contact object from ResultSet
+     * Reduces code duplication
+     * <p>
+     * Interview Point: This demonstrates DRY (Don't Repeat Yourself) principle
+     *
+     * @param rs ResultSet positioned at a row
+     * @return Contact object with data from current row
+     * @throws SQLException if column doesn't exist
+     */
+
+
+    private Contact extractContactFromResultSet(ResultSet rs) throws SQLException {
+
+        Contact contact = new Contact();
+        // Extract data from ResultSet columns
+        // Column names must match database table columns
+
+        contact.setId(rs.getInt("id"));
+        contact.setFirstName(rs.getString("first_name"));
+        contact.setLastName(rs.getString("last_name"));
+        contact.setPhone(rs.getString("phone"));
+        contact.setEmail(rs.getString("email"));
+        contact.setAddress(rs.getString("address"));
+        contact.setCreatedAt(rs.getTimestamp("created_at"));
+        contact.setUpdateAt(rs.getTimestamp("updated_at"));
+
+        return contact;
+    }
 
 }
