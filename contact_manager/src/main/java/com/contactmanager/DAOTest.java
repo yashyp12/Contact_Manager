@@ -40,7 +40,7 @@ public class DAOTest {
 
         // TEST 3: Search by name
         System.out.println("TEST 3: Searching contacts with name 'Yash'...");
-        List<Contact> searchResults = dao.searchContactsByName("Yash");
+        List<Contact> searchResults = dao.searchContactByName("Yash");
         System.out.println("Found " + searchResults.size() + " match(es):");
         for (Contact c : searchResults) {
             System.out.println("  - " + c.toDisplayString());
