@@ -12,8 +12,8 @@ public class Main {
 
         ContactService service = new ContactService(dao);
 
-    ConsoleUI ui = new ConsoleUI(service);
-ui.start();
+        ConsoleUI ui = new ConsoleUI(service);
+        ui.start();
     }
 
 
