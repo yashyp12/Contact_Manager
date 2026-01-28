@@ -12,7 +12,6 @@ import java.util.Properties;
  * Utility class for managing database connections
  * Implements Singleton pattern (only one instance exists)
  */
-
 public class DatabaseConnection {
     // Database connection parameters
     private static String DB_URL;
@@ -108,7 +107,6 @@ public class DatabaseConnection {
         }
         return false;
     }
-
 
     /**
      * Utility method to close database resources safely
