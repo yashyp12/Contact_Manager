@@ -1,5 +1,7 @@
 package com.contactmanager.ui;
 
+import com.contactmanager.dao.ContactDAO;
+import com.contactmanager.dao.ContactDAOImpl;
 import com.contactmanager.model.Contact;
 import com.contactmanager.service.ContactService;
 
@@ -11,10 +13,12 @@ public class ConsoleUI {
     private final ContactService contactService;
     private final Scanner scanner;
 
-    public ConsoleUI(ContactService contactService, Scanner scanner) {
-        this.contactService = contactService;
-        this.scanner = scanner;
-    }
+ public ConsoleUI(ContactService contactService) {
+    this.contactService = contactService;
+    this.scanner = new Scanner(System.in);
+}
+
+
 
     /**
      * Main entry point - starts the application
@@ -47,7 +51,7 @@ public class ConsoleUI {
                 case 5:
                     deleteContact();
                     break;
-                case 5:
+                case 6:
                     running = false;
                     displayExitMessage();
                     break;
@@ -65,6 +69,9 @@ public class ConsoleUI {
     }
 
     private void waitForEnter() {
+
+        System.out.println("\n Press Enter to continue ");
+        scanner.nextLine();
     }
 
     private void searchContact() {
@@ -120,6 +127,54 @@ public class ConsoleUI {
         String email = getStringInput("Email [" + existingContact.getEmail() + "]: ");
         String address = getStringInput("Address [" + existingContact.getAddress() + "]: ");
 
+
+        if (!firstName.isEmpty()) existingContact.setFirstName(firstName);
+        if (!lastName.isEmpty()) existingContact.setLastName(lastName);
+        if (!phone.isEmpty()) existingContact.setPhone(phone);
+        if (!email.isEmpty()) existingContact.setEmail(email);
+        if (!address.isEmpty()) existingContact.setAddress(address);
+
+        System.out.println("\n Updating Contact ..");
+        boolean success = contactService.updateContact(existingContact);
+
+        if (success) {
+            Contact updated = contactService.getContactById(id);
+            System.out.println("Updated Details ");
+            System.out.println(updated.toDisplayString());
+        }
+    }
+
+    private void deleteContact() {
+        System.out.println("=".repeat(60));
+        System.out.println("              DELETE CONTACT");
+        System.out.println("=".repeat(60));
+
+        int id = getIntInput("Enter Contact ID to delete: ");
+
+        Contact contact = contactService.getContactById(id);
+
+        if (contact == null) {
+            return;
+        }
+
+        System.out.println("Contact to delete");
+        System.out.println(contact.toDisplayString());
+
+        String confirm = getStringInput("Are you sure want to delte ? (yes/no)");
+
+        if (confirm.equalsIgnoreCase("yes") || confirm.equalsIgnoreCase("y")) {
+            System.out.println("Deleting contact ");
+            contactService.deleteContact(id);
+        } else {
+            System.out.println("deletion cancelled");
+        }
+    }
+
+    private void displayExitMessage() {
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("       Thank you for using Contact Manager!");
+        System.out.println("                   Goodbye!");
+        System.out.println("=".repeat(60) + "\n");
     }
 
 
@@ -159,10 +214,22 @@ public class ConsoleUI {
 
 
     private String getStringInput(String s) {
+        System.out.print(s);
+        return scanner.nextLine().trim();
     }
 
-    private int getIntInput(String enterYourChoise) {
+    private int getIntInput(String prompt) {
+        while (true) {
+            try {
+                System.out.println(prompt);
+                String input = scanner.nextLine().trim();
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("invalid input ! enter a number");
+            }
+        }
     }
+
 
     private void displayWelcomeBanner() {
 
