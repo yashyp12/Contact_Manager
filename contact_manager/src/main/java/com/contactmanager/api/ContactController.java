@@ -1,16 +1,17 @@
 package com.contactmanager.api;
+
 import com.contactmanager.model.Contact;
 import com.contactmanager.service.ContactService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import java.util.List;
 
+import java.util.List;
 
 
 /**
  * REST API Controller for Contact operations
  * Handles HTTP requests and returns JSON responses
- *
+ * <p>
  * Interview Points:
  * - This is the API layer that exposes backend functionality to frontend
  * - Uses RESTful conventions (GET, POST, PUT, DELETE)
@@ -21,7 +22,8 @@ import java.util.List;
 public class ContactController {
 
     private final ContactService contactService;
-  /**
+
+    /**
      * Constructor - receives ContactService via dependency injection
      */
 
@@ -33,24 +35,24 @@ public class ContactController {
      * Registers all API routes with Javalin app
      *
      * @param app Javalin application instance
-     *
-     * This method sets up REST endpoints
-     * Each endpoint maps to a specific HTTP method and URL path
+     *            <p>
+     *            This method sets up REST endpoints
+     *            Each endpoint maps to a specific HTTP method and URL path
      */
 
 
-    public void registerRoutes(Javalin app){
-                // GET /api/contacts - Get all contacts
-        app.get("/api/contacts",this::getAllContacts);
+    public void registerRoutes(Javalin app) {
+        // GET /api/contacts - Get all contacts
+        app.get("/api/contacts", this::getAllContacts);
 
         // GET /api/contacts/{id} - Get contact by ID
-        app.get("/api/contacts/{id}",this::getContactById);
-
-                // POST /api/contacts - Create new contact
-        app.get("/api/contacts/{id}",this::getContactById);
+        app.get("/api/contacts/{id}", this::getContactById);
 
         // POST /api/contacts - Create new contact
-        app.get("/api/contacts",this::createContact);
+        app.get("/api/contacts/{id}", this::getContactById);
+
+        // POST /api/contacts - Create new contact
+        app.get("/api/contacts", this::createContact);
 
         // PUT /api/contacts/{id} - Update existing contact
         app.put("/api/contacts/{id}", this::updateContact);
@@ -71,18 +73,31 @@ public class ContactController {
     /**
      * GET /api/contacts
      * Returns all contacts as JSON array
-     *
+     * <p>
      * Example response:
      * [
-     *   {"id":1,"firstName":"Amit","lastName":"Sharma",...},
-     *   {"id":2,"firstName":"Priya","lastName":"Verma",...}
+     * {"id":1,"firstName":"Amit","lastName":"Sharma",...},
+     * {"id":2,"firstName":"Priya","lastName":"Verma",...}
      * ]
      */
 
-private void getAllContacts(Context ctx){
+    private void getAllContacts(Context ctx) {
+
+        try {
+
+            List<Contact> contacts = contactService.getAllContacts();
+
+            // Return 200 OK with JSON array
+            ctx.json(contacts);
+            ctx.status(200);
+
+        } catch (Exception e) {
+            // Return 500 Internal Server Error
+            ctx.status(500);
+            ctx.json(new ErrorResponce(" Failed to fetch contacts: " + e.getMessage()));
+        }
+
+    }
 
     
-}
-
-
 }
