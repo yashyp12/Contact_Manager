@@ -99,5 +99,117 @@ public class ContactController {
 
     }
 
+    /**
+     * GET /api/contacts/{id}
+     * Returns single contact by ID
+     * <p>
+     * Example: GET /api/contacts/1
+     * Response: {"id":1,"firstName":"Amit",...}
+     */
+
+    private void getContactById(Context ctx) {
+        try {
+            // Extract ID from URL path parameter
+            int id = Integer.parseInt(ctx.pathParam("id"));
+
+            Contact contact = contactService.getContactById(id);
+
+            if (contact != null) {
+                // Return 200 OK with contact JSON
+                ctx.json(contact);
+                ctx.status(200);
+            } else {
+                //return 404
+                ctx.status(404);
+                ctx.json(new ErrorResponce("Contact not found with ID: " + id));
+
+            }
+        } catch (NumberFormatException e) {
+            //return 404
+            ctx.status(400);
+            ctx.json(new ErrorResponce("Failed to fetch contact : " + e.getMessage()));
+
+        }
+    }
+
+    /**
+     * POST /api/contacts
+     * Creates new contact from JSON request body
+     * <p>
+     * Example request body:
+     * {
+     * "firstName": "New",
+     * "lastName": "User",
+     * "phone": "9999999999",
+     * "email": "new@example.com",
+     * "address": "Mumbai"
+     * }
+     */
+
+    private void createContact(Context ctx) {
+
+        try {
+            //parse json requst body to contact object
+            Contact contact = ctx.bodyAsClass(Contact.class);
+
+            //validate and add through service
+            boolean success = contactService.addContact(contact);
+
+            if (success) {
+                ctx.status(201);
+                ctx.json(new SuccessResponce("Contact created successfully "));
+
+            } else {
+                // return 400 bad requst
+                ctx.status(400);
+                ctx.json(new ErrorResponce("Failed to create  contact check validation errors  "));
+            }
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.json(new ErrorResponce("Failed to CREATE contact : " + e.getMessage()));
+        }
+    }
+
+    /**
+     * PUT /api/contacts/{id}
+     * Updates existing contact
+     * <p>
+     * Example: PUT /api/contacts/1
+     * Request body: {"id":1,"firstName":"Updated",...}
+     */
+
+    private void updateContact(Context ctx) {
+        try {
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            Contact contact = ctx.bodyAsClass(Contact.class);
+
+            // Ensure ID in URL matches ID in body
+            contact.setId(id);
+
+            boolean success = contactService.updateContact(contact);
+
+              if (success) {
+                // Return 200 OK
+                ctx.status(200);
+                ctx.json(new SuccessResponse("Contact updated successfully"));
+            } else {
+                // Return 404 Not Found or 400 Bad Request
+                ctx.status(404);
+                ctx.json(new ErrorResponse("Contact not found or validation failed"));
+            }
+
+        } catch (NumberFormatException e) {
+            ctx.status(400);
+            ctx.json(new ErrorResponse("Invalid ID format"));
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.json(new ErrorResponse("Failed to update contact: " + e.getMessage()));
+        }
+        }
+    }
 
 }
+
+
+
+

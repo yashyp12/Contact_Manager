@@ -156,4 +156,7 @@ public class Contact {
         );
     }
 
+    public void js() {
+
+    }
 }
