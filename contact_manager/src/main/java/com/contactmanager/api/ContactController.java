@@ -337,17 +337,8 @@ private static class SuccessResponce{
 
 
 
-
-
-
 }
 
-/**
- * DELETE /api/contacts/{id}
- * Deletes contact by ID
- * <p>
- * Example: DELETE /api/contacts/1
- */
 
 
 
