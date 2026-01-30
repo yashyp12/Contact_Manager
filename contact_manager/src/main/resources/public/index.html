@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Manager - Manage Your Contacts</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>📇 Contact Manager</h1>
+            <p>Manage your contacts efficiently</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <h3 id="totalContacts">0</h3>
+                    <p>Total Contacts</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="showAddModal()">
+                ➕ Add New Contact
+            </button>
+
+            <div class="search-box">
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Search by name..."
+                       onkeyup="searchContacts()">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+
+        <!-- Contacts Table -->
+        <div class="table-container">
+            <table class="contacts-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="contactsTableBody">
+                    <!-- Contacts will be loaded here dynamically -->
+                    <tr>
+                        <td colspan="6" class="loading">Loading contacts...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Add/Edit Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Contact</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+
+            <form id="contactForm" onsubmit="saveContact(event)">
+                <div class="form-group">
+                    <label for="firstName">First Name *</label>
+                    <input type="text" id="firstName" required
+                           placeholder="Enter first name">
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName"
+                           placeholder="Enter last name (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" required
+                           placeholder="Enter phone number">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email"
+                           placeholder="Enter email (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" rows="3"
+                              placeholder="Enter address (optional)"></textarea>
+                </div>
+
+                <input type="hidden" id="contactId">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        💾 Save Contact
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>⚠️ Confirm Delete</h2>
+                <span class="close" onclick="closeDeleteModal()">&times;</span>
+            </div>
+
+            <div class="modal-body">
+                <p>Are you sure you want to delete this contact?</p>
+                <p class="contact-name" id="deleteContactName"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">
+                    Cancel
+                </button>
+                <button class="btn btn-danger" onclick="confirmDelete()">
+                    🗑️ Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification"></div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

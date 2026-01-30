@@ -94,7 +94,7 @@ public class ContactController {
         } catch (Exception e) {
             // Return 500 Internal Server Error
             ctx.status(500);
-            ctx.json(new ErrorResponce(" Failed to fetch contacts: " + e.getMessage()));
+            ctx.json(new ErrorResponse(" Failed to fetch contacts: " + e.getMessage()));
         }
 
     }
@@ -121,13 +121,13 @@ public class ContactController {
             } else {
                 //return 404
                 ctx.status(404);
-                ctx.json(new ErrorResponce("Contact not found with ID: " + id));
+                ctx.json(new ErrorResponse("Contact not found with ID: " + id));
 
             }
         } catch (NumberFormatException e) {
             //return 404
             ctx.status(400);
-            ctx.json(new ErrorResponce("Failed to fetch contact : " + e.getMessage()));
+            ctx.json(new ErrorResponse("Failed to fetch contact : " + e.getMessage()));
 
         }
     }
@@ -157,16 +157,16 @@ public class ContactController {
 
             if (success) {
                 ctx.status(201);
-                ctx.json(new SuccessResponce("Contact created successfully "));
+                ctx.json(new SuccessResponse("Contact created successfully "));
 
             } else {
                 // return 400 bad requst
                 ctx.status(400);
-                ctx.json(new ErrorResponce("Failed to create  contact check validation errors  "));
+                ctx.json(new ErrorResponse("Failed to create  contact check validation errors  "));
             }
         } catch (Exception e) {
             ctx.status(500);
-            ctx.json(new ErrorResponce("Failed to CREATE contact : " + e.getMessage()));
+            ctx.json(new ErrorResponse("Failed to CREATE contact : " + e.getMessage()));
         }
     }
 
@@ -226,10 +226,10 @@ public class ContactController {
             }
      }catch (NumberFormatException e){
          ctx.status(400);
-         ctx.json(new ErrorResponce("Invalid ID format "));
+         ctx.json(new ErrorResponse("Invalid ID format "));
      }catch (Exception e){
          ctx.status(500);
-         ctx.json(new ErrorResponce("Failed to delete contact : " + e.getMessage()));
+         ctx.json(new ErrorResponse("Failed to delete contact : " + e.getMessage()));
      }
     }
 
@@ -248,7 +248,7 @@ public class ContactController {
 
              if(name == null || name.trim().isEmpty()){
                  ctx.status(400);
-                 ctx.json(new ErrorResponce("Search name is required "));
+                 ctx.json(new ErrorResponse("Search name is required "));
                  return;
              }
 
@@ -259,7 +259,7 @@ public class ContactController {
              ctx.status(200);
          }catch (Exception e){
              ctx.status(500);
-             ctx.json(new ErrorResponce("Search Failed : " + e.getMessage()));
+             ctx.json(new ErrorResponse("Search Failed : " + e.getMessage()));
          }
      }
 
@@ -276,11 +276,11 @@ public class ContactController {
         try{
             int count = contactService.getContactCount();
 
-            ctx.json(new CountResponce(count));
+            ctx.json(new CountResponse(count));
             ctx.status(200);
         }catch (Exception e){
             ctx.status(500);
-            ctx.json(new ErrorResponce("Failed to get count : " + e.getMessage()));
+            ctx.json(new ErrorResponse("Failed to get count : " + e.getMessage()));
 
         }
     }
@@ -290,11 +290,11 @@ public class ContactController {
      * Success response wrapper
      */
 
-private static class SuccessResponce{
+private static class SuccessResponse{
     private final String message;
     private final boolean success = true;
 
-        public SuccessResponce(String message) {
+        public SuccessResponse(String message) {
             this.message = message;
         }
 
@@ -309,11 +309,11 @@ private static class SuccessResponce{
 
     //error respone wrapper
 
-    private static class ErrorResponce{
+    private static class ErrorResponse{
     private final String error;
     private final boolean success = false;
 
-        public ErrorResponce(String error) {
+        public ErrorResponse(String error) {
             this.error = error;
         }
 
