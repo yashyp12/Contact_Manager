@@ -188,7 +188,7 @@ public class ContactController {
 
             boolean success = contactService.updateContact(contact);
 
-              if (success) {
+            if (success) {
                 // Return 200 OK
                 ctx.status(200);
                 ctx.json(new SuccessResponse("Contact updated successfully"));
@@ -205,10 +205,150 @@ public class ContactController {
             ctx.status(500);
             ctx.json(new ErrorResponse("Failed to update contact: " + e.getMessage()));
         }
+    }
+
+
+    private void deleteContact(Context ctx) {
+     try{
+         int id = Integer.parseInt(ctx.pathParam("id"));
+
+         boolean success = contactService.deleteContact(id);
+
+
+            if (success) {
+                // Return 200 OK
+                ctx.status(200);
+                ctx.json(new SuccessResponse("Contact deleted successfully"));
+            } else {
+                // Return 404 Not Found
+                ctx.status(404);
+                ctx.json(new ErrorResponse("Contact not found with ID: " + id));
+            }
+     }catch (NumberFormatException e){
+         ctx.status(400);
+         ctx.json(new ErrorResponce("Invalid ID format "));
+     }catch (Exception e){
+         ctx.status(500);
+         ctx.json(new ErrorResponce("Failed to delete contact : " + e.getMessage()));
+     }
+    }
+
+     /**
+     * GET /api/contacts/search?name=xyz
+     * Searches contacts by name
+     *
+     * Example: GET /api/contacts/search?name=Amit
+     * Returns: Array of matching contacts
+     */
+
+     private void searchContacts(Context ctx){
+         try{
+             //extract query paramter
+             String name = ctx.queryParam("name");
+
+             if(name == null || name.trim().isEmpty()){
+                 ctx.status(400);
+                 ctx.json(new ErrorResponce("Search name is required "));
+                 return;
+             }
+
+             List<Contact> results = contactService.searchContactByName(name);
+
+             //return 200 ok with results
+             ctx.json(results);
+             ctx.status(200);
+         }catch (Exception e){
+             ctx.status(500);
+             ctx.json(new ErrorResponce("Search Failed : " + e.getMessage()));
+         }
+     }
+
+
+    /**
+     * GET /api/contacts/count
+     * Returns total number of contacts
+     *
+     * Response: {"count": 5}
+     */
+
+
+    private void getContactCount(Context ctx){
+        try{
+            int count = contactService.getContactCount();
+
+            ctx.json(new CountResponce(count));
+            ctx.status(200);
+        }catch (Exception e){
+            ctx.status(500);
+            ctx.json(new ErrorResponce("Failed to get count : " + e.getMessage()));
+
         }
     }
 
+        // ========== Response Classes (for consistent JSON format) ==========
+    /**
+     * Success response wrapper
+     */
+
+private static class SuccessResponce{
+    private final String message;
+    private final boolean success = true;
+
+        public SuccessResponce(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public boolean isSuccess(){
+            return success;
+        }
+    }
+
+    //error respone wrapper
+
+    private static class ErrorResponce{
+    private final String error;
+    private final boolean success = false;
+
+        public ErrorResponce(String error) {
+            this.error = error;
+        }
+
+        public String getError() { return error;}
+        public boolean isSuccess(){ return success;}
+
+    }
+
+     /**
+     * Count response wrapper
+     */
+    private static class CountResponse {
+        private final int count;
+
+        public CountResponse(int count) {
+            this.count = count;
+        }
+
+        public int getCount() { return count; }
+    }
+
+
+
+
+
+
 }
+
+/**
+ * DELETE /api/contacts/{id}
+ * Deletes contact by ID
+ * <p>
+ * Example: DELETE /api/contacts/1
+ */
+
 
 
 
