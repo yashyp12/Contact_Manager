@@ -36,7 +36,7 @@ public class ApiServer {
 
             // Serve static files from src/main/resources/public
             // This will serve our HTML, CSS, JS files
-//            config.staticFiles.add("/public", Location.CLASSPATH);
+            config.staticFiles.add("/public", Location.CLASSPATH);
         }).start(7000); //start server on 700 port
 
     //register api routes
