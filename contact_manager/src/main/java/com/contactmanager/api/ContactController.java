@@ -42,33 +42,27 @@ public class ContactController {
 
 
     public void registerRoutes(Javalin app) {
-        // GET /api/contacts - Get all contacts
-        app.get("/api/contacts", this::getAllContacts);
+    // GET /api/contacts - Get all contacts
+    app.get("/api/contacts", this::getAllContacts);
 
-        // GET /api/contacts/{id} - Get contact by ID
-        app.get("/api/contacts/{id}", this::getContactById);
+    // GET /api/contacts/{id} - Get contact by ID
+    app.get("/api/contacts/{id}", this::getContactById);
 
-        // POST /api/contacts - Create new contact
-        app.get("/api/contacts/{id}", this::getContactById);
+    // POST /api/contacts -
+    app.post("/api/contacts", this::createContact);
 
-        // POST /api/contacts - Create new contact
-        app.get("/api/contacts", this::createContact);
+    // PUT /api/contacts/{id} - Update existing contact
+    app.put("/api/contacts/{id}", this::updateContact);
 
-        // PUT /api/contacts/{id} - Update existing contact
-        app.put("/api/contacts/{id}", this::updateContact);
+    // DELETE /api/contacts/{id} - Delete contact
+    app.delete("/api/contacts/{id}", this::deleteContact);
 
+    // GET /api/contacts/search?name=xyz - Search contacts by name
+    app.get("/api/contacts/search", this::searchContacts);
 
-        // DELETE /api/contacts/{id} - Delete contact
-        app.delete("/api/contacts/{id}", this::deleteContact);
-
-        // GET /api/contacts/search?name=xyz - Search contacts by name
-        app.get("/api/contacts/search", this::searchContacts);
-
-        // GET /api/contacts/count - Get total count
-        app.get("/api/contacts/count", this::getContactCount);
-
-    }
-
+    // GET /api/contacts/count - Get total count
+    app.get("/api/contacts/count", this::getContactCount);
+}
 
     /**
      * GET /api/contacts
@@ -208,30 +202,37 @@ public class ContactController {
     }
 
 
-    private void deleteContact(Context ctx) {
-     try{
-         int id = Integer.parseInt(ctx.pathParam("id"));
+   /**
+ * DELETE /api/contacts/{id}
+ * Deletes contact by ID
+ */
+private void deleteContact(Context ctx) {
+    try {
+        int id = Integer.parseInt(ctx.pathParam("id"));
 
-         boolean success = contactService.deleteContact(id);
+        boolean success = contactService.deleteContact(id);
 
+        if (success) {
+            // Return 200 OK with JSON
+            ctx.status(200);
+            ctx.json(new SuccessResponse("Contact deleted successfully"));
+        } else {
+            // Return 404 Not Found with JSON (NOT plain text)
+            ctx.status(404);
+            ctx.json(new ErrorResponse("Contact not found with ID: " + id));
+        }
 
-            if (success) {
-                // Return 200 OK
-                ctx.status(200);
-                ctx.json(new SuccessResponse("Contact deleted successfully"));
-            } else {
-                // Return 404 Not Found
-                ctx.status(404);
-                ctx.json(new ErrorResponse("Contact not found with ID: " + id));
-            }
-     }catch (NumberFormatException e){
-         ctx.status(400);
-         ctx.json(new ErrorResponse("Invalid ID format "));
-     }catch (Exception e){
-         ctx.status(500);
-         ctx.json(new ErrorResponse("Failed to delete contact : " + e.getMessage()));
-     }
+    } catch (NumberFormatException e) {
+        // Return 400 Bad Request with JSON
+        ctx.status(400);
+        ctx.json(new ErrorResponse("Invalid ID format"));
+    } catch (Exception e) {
+        // Return 500 Internal Server Error with JSON
+        ctx.status(500);
+        ctx.json(new ErrorResponse("Failed to delete contact: " + e.getMessage()));
     }
+}
+
 
      /**
      * GET /api/contacts/search?name=xyz

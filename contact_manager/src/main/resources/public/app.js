@@ -93,26 +93,44 @@ async function updateContact(id, contactData) {
 /**
  * Delete contact
  */
+ /**
+ * Delete contact
+ */
 async function deleteContact(id) {
     try {
         const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to delete contact');
-        }
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
 
-        showNotification('Contact deleted successfully!', 'success');
-        loadContacts();
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to delete contact');
+            }
+
+            showNotification('Contact deleted successfully!', 'success');
+            loadContacts();
+        } else {
+            // If not JSON, read as text
+            const text = await response.text();
+
+            if (response.ok) {
+                showNotification('Contact deleted successfully!', 'success');
+                loadContacts();
+            } else {
+                throw new Error(text || 'Failed to delete contact');
+            }
+        }
 
     } catch (error) {
         console.error('Error deleting contact:', error);
         showNotification(error.message, 'error');
     }
 }
-
 // ========== UI Functions ==========
 
 /**

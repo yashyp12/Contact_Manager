@@ -67,56 +67,57 @@
     </main>
 
     <!-- Add/Edit Contact Modal -->
-    <div id="contactModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add New Contact</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
+  <!-- Add/Edit Contact Modal -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2 id="modalTitle">Add New Contact</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="contactForm" onsubmit="saveContact(event)">
+
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="firstName" required placeholder="John">
             </div>
 
-            <form id="contactForm" onsubmit="saveContact(event)">
-                <div class="form-group">
-                    <label for="firstName">First Name *</label>
-                    <input type="text" id="firstName" required
-                           placeholder="Enter first name">
-                </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" id="lastName" placeholder="Doe">
+            </div>
 
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName"
-                           placeholder="Enter last name (optional)">
-                </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="phone" required placeholder="+91 98765 43210">
+            </div>
 
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="tel" id="phone" required
-                           placeholder="Enter phone number">
-                </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="john@example.com">
+            </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email"
-                           placeholder="Enter email (optional)">
-                </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea id="address" rows="3" placeholder="Street, City, Country"></textarea>
+            </div>
 
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" rows="3"
-                              placeholder="Enter address (optional)"></textarea>
-                </div>
+            <input type="hidden" id="contactId">
 
-                <input type="hidden" id="contactId">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    💾 Save Contact
+                </button>
+            </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        💾 Save Contact
-                    </button>
-                </div>
-            </form>
-        </div>
+        </form>
+
     </div>
+</div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="modal">
