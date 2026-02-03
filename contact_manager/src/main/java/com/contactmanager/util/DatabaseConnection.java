@@ -30,41 +30,108 @@ public class DatabaseConnection {
      * This method reads the properties file from resources folder
      */
 
+//    private static void loadDatabaseProperties() {
+//        Properties properties = new Properties();
+//
+//        // Try-with-resources: Automatically closes InputStream after use
+//        try (InputStream input = DatabaseConnection.class
+//                .getClassLoader().getResourceAsStream("database.properties")) {
+//            if (input == null) {
+//                System.err.println("ERROR: Unable to find database.properties file!");
+//                System.err.println("Make sure database.properties exists in src/main/resources/");
+//                return;
+//            }
+//
+//            //LOAD PROPERTIES FROM FILE
+//            properties.load(input);
+//
+//            //read val from the proeprties file - it accepts the key and return null if not found
+//            DB_URL = properties.getProperty("db.url");
+//            DB_USERNAME = properties.getProperty("db.username");
+//            DB_PASSWORD = properties.getProperty("db.password");
+//            DB_DRIVER = properties.getProperty("db.driver");
+//
+////    load jdbc driver class THROWS CLASS NOT FOUND EXCEPTION
+//            Class.forName(DB_DRIVER);
+//
+//            System.out.println("✓ Database configuration loaded successfully!");
+//
+//
+//        } catch (IOException E) {
+//            System.err.println("ERROR: Failed to load database.properties");
+//        } catch (ClassNotFoundException e) {
+//            System.err.println("ERROR: PostgreSQL JDBC Driver not found!");
+//            System.err.println("Make sure postgresql dependency is in pom.xml");
+//            e.printStackTrace();
+//        }
+//    }
+
+
+//    FOR THE PRODUCTION ONLY
+
+    /**
+     * Loads database configuration from database.properties file or environment variables
+     */
     private static void loadDatabaseProperties() {
-        Properties properties = new Properties();
+        // Check if running on cloud (DATABASE_URL environment variable exists)
+        String databaseUrl = System.getenv("DATABASE_URL");
 
-        // Try-with-resources: Automatically closes InputStream after use
-        try (InputStream input = DatabaseConnection.class
-                .getClassLoader().getResourceAsStream("database.properties")) {
-            if (input == null) {
-                System.err.println("ERROR: Unable to find database.properties file!");
-                System.err.println("Make sure database.properties exists in src/main/resources/");
-                return;
+        if (databaseUrl != null && !databaseUrl.isEmpty()) {
+            // Running on Render.com - use environment variable
+            System.out.println("✓ Using DATABASE_URL from environment");
+
+            // Parse DATABASE_URL format: postgres://user:password@host:port/database
+            try {
+                // Render provides URL in format: postgres://...
+                // JDBC needs: jdbc:postgresql://...
+                databaseUrl = databaseUrl.replace("postgres://", "jdbc:postgresql://");
+
+                DB_URL = databaseUrl;
+                DB_DRIVER = "org.postgresql.Driver";
+
+                Class.forName(DB_DRIVER);
+                System.out.println("✓ Database driver loaded successfully!");
+
+            } catch (ClassNotFoundException e) {
+                System.err.println("ERROR: PostgreSQL JDBC Driver not found!");
+                e.printStackTrace();
             }
+        } else {
+            // Running locally - use database.properties file
+            System.out.println("✓ Using local database.properties");
 
-            //LOAD PROPERTIES FROM FILE
-            properties.load(input);
+            Properties properties = new Properties();
 
-            //read val from the proeprties file - it accepts the key and return null if not found
-            DB_URL = properties.getProperty("db.url");
-            DB_USERNAME = properties.getProperty("db.username");
-            DB_PASSWORD = properties.getProperty("db.password");
-            DB_DRIVER = properties.getProperty("db.driver");
+            try (InputStream input = DatabaseConnection.class
+                    .getClassLoader()
+                    .getResourceAsStream("database.properties")) {
 
-//    load jdbc driver class THROWS CLASS NOT FOUND EXCEPTION
-            Class.forName(DB_DRIVER);
+                if (input == null) {
+                    System.err.println("ERROR: Unable to find database.properties file!");
+                    return;
+                }
 
-            System.out.println("✓ Database configuration loaded successfully!");
+                properties.load(input);
 
+                DB_URL = properties.getProperty("db.url");
+                DB_USERNAME = properties.getProperty("db.username");
+                DB_PASSWORD = properties.getProperty("db.password");
+                DB_DRIVER = properties.getProperty("db.driver");
 
-        } catch (IOException E) {
-            System.err.println("ERROR: Failed to load database.properties");
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: PostgreSQL JDBC Driver not found!");
-            System.err.println("Make sure postgresql dependency is in pom.xml");
-            e.printStackTrace();
+                Class.forName(DB_DRIVER);
+
+                System.out.println("✓ Database configuration loaded successfully!");
+
+            } catch (IOException e) {
+                System.err.println("ERROR: Failed to load database.properties");
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                System.err.println("ERROR: PostgreSQL JDBC Driver not found!");
+                e.printStackTrace();
+            }
         }
     }
+
 
     /**
      * Creates and returns a new database connection
@@ -76,14 +143,21 @@ public class DatabaseConnection {
      *                      then close it in finally block or try-with-resources
      */
 
+
+    /**
+     * Creates and returns a new database connection
+     */
     public static Connection getConnection() throws SQLException {
-        if (DB_URL == null || DB_USERNAME == null || DB_PASSWORD == null) {
+        if (DB_URL == null) {
             throw new SQLException("Database configuration not loaded properly!");
         }
-
-//         create and return connection
-        return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-
+        // If using environment variable (cloud), username/password are in URL
+        if (System.getenv("DATABASE_URL") != null) {
+            return DriverManager.getConnection(DB_URL);
+        } else {
+            // Local - use separate username/password
+            return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        }
     }
 
     /**
