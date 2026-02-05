@@ -5,14 +5,14 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Copy Maven wrapper and pom.xml
-COPY contact_manager/.mvn .mvn
+COPY .mvn .mvn
 COPY mvnw pom.xml ./
 
 # Download dependencies (cached layer)
 RUN ./mvnw dependency:go-offline
 
 # Copy source code
-COPY contact_manager/src ./src
+COPY src ./src
 
 # Build application
 RUN ./mvnw clean package -DskipTests

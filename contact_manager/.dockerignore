@@ -1,4 +1,4 @@
-contact_manager/target/
+target/
 .mvn/
 *.iml
 .idea/
