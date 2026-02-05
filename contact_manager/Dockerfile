@@ -1,24 +1,19 @@
-# Use official OpenJDK 17 image
-FROM eclipse-temurin:17-jdk-alpine
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY .mvn .mvn
-COPY mvnw pom.xml ./
+COPY contact_manager/pom.xml .
+RUN mvn dependency:go-offline
 
-# Download dependencies (cached layer)
-RUN ./mvnw dependency:go-offline
+COPY contact_manager/src ./src
+RUN mvn clean package -DskipTests
 
-# Copy source code
-COPY src ./src
+FROM eclipse-temurin:17-jre
 
-# Build application
-RUN ./mvnw clean package -DskipTests
+WORKDIR /app
 
-# Expose port (Render will set PORT env variable)
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 7000
 
-# Run the application
-CMD ["java", "-jar", "target/contact_manager-1.0.0.jar"]
+CMD ["java","-jar","app.jar"]
