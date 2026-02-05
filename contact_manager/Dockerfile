@@ -1,19 +1,30 @@
+# Multi-stage build for smaller image
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-COPY contact_manager/pom.xml .
-RUN mvn dependency:go-offline
+# Copy pom.xml first (for dependency caching)
+COPY pom.xml .
 
-COPY contact_manager/src ./src
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build JAR
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:17-jre
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+# Copy JAR from build stage
+COPY --from=build /app/target/contact_manager-1.0.0.jar app.jar
 
+# Expose port
 EXPOSE 7000
 
-CMD ["java","-jar","app.jar"]
+# Run application
+CMD ["java", "-jar", "app.jar"]
