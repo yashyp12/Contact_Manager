@@ -1,18 +1,13 @@
-# Multi-stage build for smaller image
+# Build stage
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copy pom.xml first (for dependency caching)
+# Copy Maven files
 COPY pom.xml .
-
-# Download dependencies
-RUN mvn dependency:go-offline -B
-
-# Copy source code
 COPY src ./src
 
-# Build JAR
+# Build application (skip tests for faster build)
 RUN mvn clean package -DskipTests
 
 # Runtime stage
@@ -20,8 +15,8 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy JAR from build stage
-COPY --from=build /app/target/contact_manager-1.0.0.jar app.jar
+# Copy JAR file (use wildcard to catch any JAR name)
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose port
 EXPOSE 7000
