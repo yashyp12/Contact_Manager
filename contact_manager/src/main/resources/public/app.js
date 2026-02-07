@@ -1,5 +1,6 @@
 // ========== Configuration ==========
-const API_BASE_URL = 'http://localhost:7000/api';
+// Use relative URL to work in both local and deployed environments
+const API_BASE_URL = '/api';
 
 // ========== State Management ==========
 let contacts = [];
