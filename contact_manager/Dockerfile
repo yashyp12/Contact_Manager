@@ -3,20 +3,27 @@ FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copy Maven files
+# Copy everything
 COPY pom.xml .
 COPY src ./src
 
-# Build application
-RUN mvn clean package -DskipTests
+# Build and list what was created (for debugging)
+RUN mvn clean package -DskipTests && \
+    echo "=== Files in target directory ===" && \
+    ls -la target/
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy the shaded JAR (note: shade plugin adds -shaded suffix)
-COPY --from=build /app/target/*-shaded.jar app.jar
+# Copy ALL jar files and rename to app.jar
+COPY --from=build /app/target/*.jar ./
+
+# Rename the jar to app.jar
+RUN mv *.jar app.jar && \
+    echo "=== Final JAR file ===" && \
+    ls -la
 
 # Expose port
 EXPOSE 7000
