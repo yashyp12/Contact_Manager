@@ -7,7 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Build application (skip tests for faster build)
+# Build application
 RUN mvn clean package -DskipTests
 
 # Runtime stage
@@ -15,8 +15,8 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy JAR file (use wildcard to catch any JAR name)
-COPY --from=build /app/target/*.jar app.jar
+# Copy the shaded JAR (note: shade plugin adds -shaded suffix)
+COPY --from=build /app/target/*-shaded.jar app.jar
 
 # Expose port
 EXPOSE 7000
