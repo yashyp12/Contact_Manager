@@ -14,8 +14,10 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy the assembled JAR (with dependencies)
-COPY --from=build /app/target/*-jar-with-dependencies.jar app.jar
+# Copy the shaded JAR (with dependencies)
+# maven-shade-plugin creates a jar with original name
+# The clean package ensures only one version exists
+COPY --from=build /app/target/contact-manager-1.0.0.jar app.jar
 
 EXPOSE 7000
 
