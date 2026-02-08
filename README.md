@@ -195,10 +195,12 @@ contact_manager/
   "firstName": "string (required)",
   "lastName": "string (optional)",
   "phone": "string (required)",
-  "email": "string (optional)",
+  "email": "string (optional, unique)",
   "address": "string (optional)"
 }
 ```
+
+**Note**: API uses camelCase (firstName, lastName) while database uses snake_case (first_name, last_name). Mapping is handled automatically by the DAO layer.
 
 ---
 
@@ -214,7 +216,7 @@ contact_manager/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yashyp12/Contact_Manager.git
+   git clone <your-repository-url>
    cd Contact_Manager/contact_manager
    ```
 
@@ -266,7 +268,7 @@ CREATE TABLE contacts (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50),
     phone VARCHAR(15) NOT NULL,
-    email VARCHAR(100) UNIQUE,
+    email VARCHAR(100) UNIQUE,          -- NULL values allowed, but unique if provided
     address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
