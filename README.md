@@ -173,35 +173,6 @@ contact_manager/
 │  • Contacts Table                   │
 └─────────────────────────────────────┘
 ```
-
----
-
-## 🔌 API Endpoints
-
-### Base URL: `http://localhost:7000/api`
-
-| Method | Endpoint | Description | Request Body |
-|--------|----------|-------------|--------------|
-| `GET` | `/contacts` | Get all contacts | - |
-| `GET` | `/contacts/:id` | Get contact by ID | - |
-| `GET` | `/contacts/search?name={name}` | Search contacts by name | - |
-| `POST` | `/contacts` | Create new contact | Contact JSON |
-| `PUT` | `/contacts/:id` | Update contact | Contact JSON |
-| `DELETE` | `/contacts/:id` | Delete contact | - |
-
-### Contact JSON Schema
-```json
-{
-  "firstName": "string (required)",
-  "lastName": "string (optional)",
-  "phone": "string (required)",
-  "email": "string (optional, unique)",
-  "address": "string (optional)"
-}
-```
-
-**Note**: API uses camelCase (firstName, lastName) while database uses snake_case (first_name, last_name). Mapping is handled automatically by the DAO layer.
-
 ---
 
 ## 🚀 Getting Started
@@ -260,27 +231,6 @@ contact_manager/
 
 ---
 
-## 💾 Database Schema
-
-```sql
-CREATE TABLE contacts (
-    id SERIAL PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50),
-    phone VARCHAR(15) NOT NULL,
-    email VARCHAR(100) UNIQUE,          -- NULL values allowed, but unique if provided
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Performance indexes
-CREATE INDEX idx_contacts_name ON contacts(first_name, last_name);
-CREATE INDEX idx_contacts_phone ON contacts(phone);
-```
-
----
-
 ## 🏗️ Design Patterns Used
 
 - **DAO Pattern** - Separation of data persistence logic
@@ -317,18 +267,6 @@ Containerization for consistent deployment across environments.
 - **CORS Enabled**: API accessible from any origin
 - **Static Files**: Web UI served from `/resources/public`
 - **Port Configuration**: Configurable via `PORT` environment variable (default: 7000)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to submit issues and pull requests.
-
----
-
-## 📄 License
-
-This project is open-source and available for educational purposes.
 
 ---
 
