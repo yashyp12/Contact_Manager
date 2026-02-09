@@ -334,6 +334,6 @@ This project is open-source and available for educational purposes.
 
 <div align="center">
 
-**Built with ❤️ using Java and PostgreSQL**
+**Crafted by @Yash Patil **
 
 </div>
