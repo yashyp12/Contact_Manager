@@ -1,4 +1,4 @@
-# 📇 Contact Manager
+# 📇 Smart Contact Manager
 
 <div align="center">
 
